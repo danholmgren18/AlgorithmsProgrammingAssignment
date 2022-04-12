@@ -42,33 +42,31 @@ public class Sorter {
 
     //Using the pseudocode from the book
     public static void heapSort(ArrayList<Integer> fileContents){
-        //TODO Rewrite this using an arrayList
         int k;
         int v;
         int j;
-        Integer[] temp = fileContents.toArray(new Integer[0]);
         boolean heap;
-        for(int i = Math.floorDiv(temp.length, 2) - 1; i > 1; i--){
+        for(int i = (fileContents.size() / 2); i > 0; i--){
             k = i;
-            v = temp[k];
+            v = fileContents.get(k);
             heap = false;
-            while(!heap && (2 * k) <= temp.length - 1){
+            while(!heap && (2 * k) <= fileContents.size() - 1){
                 j = 2 * k;
-                if(j < temp.length - 1){
-                    if(temp[j] < temp[j + 1]){
+                if(j < fileContents.size() - 1){
+                    if(fileContents.get(j) < fileContents.get(j + 1)){
                         j++;
                     }
                 }
-                if(v >= temp[j]){
+                if(v >= fileContents.get(j)){
                     heap = true;
-                } else{
-                    temp[k] = temp[j];
+                } else {
+                    fileContents.set(k, fileContents.get(j));
                     k = j;
                 }
             }
-            temp[k] = v;
+            fileContents.set(k, v);
         }
-        System.out.println(Arrays.toString(temp));
+        System.out.println(fileContents);
     }
 
     //Using the pseudocode from the book
