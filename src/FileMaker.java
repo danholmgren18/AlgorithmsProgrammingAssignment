@@ -10,38 +10,42 @@ import java.util.Comparator;
  */
 public class FileMaker {
     private static final int MAX = 10000;
-    private static final ArrayList<File> files = new ArrayList<>();
 
     /**
      * Generates all the files, passes them to
      * writeFile() to be filled
      * @throws IOException If file cannot be found
      */
-    public static ArrayList<File> generateFiles(int size, int fileNum) throws IOException {
+    public static ArrayList<File> generateFiles(int size, int fileNum, int fileFlag) throws IOException {
+        ArrayList<File> files = new ArrayList<>();
         File file;
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < fileNum; j++){
+        for(int i  = 0; i < fileNum; i++) {
 
-                //Holds all the random numbers to be sorted
-                ArrayList<Integer> contents = new ArrayList<>();
-                for(int num = 0; num < size; num++){
-                    contents.add((int) (Math.random() * MAX));
-                }
+            ArrayList<Integer> contents = new ArrayList<>();
+            for (int num = 0; num < size; num++) {
+                contents.add((int) (Math.random() * MAX));
+            }
 
-                //Creates the proper file based on the current outer loop iteration
-                if(i == 0){
-                    file = new File("Unsorted " + size + " " + (j + 1));
+            switch (fileFlag) {
+                case 1:
+                    file = new File("Unsorted Files/Unsorted " + size + "/Unsorted " + size + " " + (i + 1));
                     writeFile(contents, file);
-                } else if(i == 1){
-                    file = new File("Sorted " + size + " " + (j + 1));
+                    files.add(file);
+                    break;
+                case 2:
+                    file = new File("Sorted Files/Sorted " + size + "/Sorted " + size + " " + (i + 1));
                     contents.sort(Comparator.naturalOrder());
                     writeFile(contents, file);
-                } else {
-                    file = new File("Reverse Sorted " + size + " " + (j + 1));
+                    files.add(file);
+                    break;
+                case 3:
+                    file = new File("Reverse Sorted Files/Reverse Sorted " + size + "/Reverse Sorted " + size + " " + (i + 1));
                     contents.sort(Collections.reverseOrder());
                     writeFile(contents, file);
-                }
-                files.add(file);
+                    files.add(file);
+                    break;
+                default:
+                    break;
             }
         }
         return files;
