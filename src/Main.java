@@ -15,75 +15,70 @@ public class Main {
         int small = 10000;
         int medium = 100000;
         int large = 1000000;
-        //The number of files of each type to
-        //be generated
-        int fileNum = 1;
+        //The number of files of each type to be generated
+        int fileNum = 30;
 
-        ArrayList<File> unsortedSmallFiles;
-        ArrayList<File> unsortedMediumFiles;
-        ArrayList<File> unsortedLargeFiles;
+        //Commented out to save time
+//        FileMaker.generateFiles(small, fileNum, 1);
+//        FileMaker.generateFiles(medium, fileNum, 1);
+//        FileMaker.generateFiles(large, fileNum, 1);
+//
+//        FileMaker.generateFiles(small, fileNum, 2);
+//        FileMaker.generateFiles(medium, fileNum, 2);
+//        FileMaker.generateFiles(large, fileNum, 2);
+//
+//        FileMaker.generateFiles(small, fileNum, 3);
+//        FileMaker.generateFiles(medium, fileNum, 3);
+//        FileMaker.generateFiles(large, fileNum, 3);
 
-        ArrayList<File> sortedSmallFiles;
-        ArrayList<File> sortedMediumFiles;
-        ArrayList<File> sortedLargeFiles;
+        getRunTimes("Unsorted", small);
+        getRunTimes("Unsorted", medium);
+        getRunTimes("Unsorted", large);
 
-        ArrayList<File> reverseSortedSmallFiles;
-        ArrayList<File> reverseSortedMediumFiles;
-        ArrayList<File> reverseSortedLargeFiles;
+        getRunTimes("Sorted", small);
+        getRunTimes("Sorted", medium);
+        getRunTimes("Sorted", large);
 
-        unsortedSmallFiles = FileMaker.generateFiles(small, fileNum, 1);
-        unsortedMediumFiles = FileMaker.generateFiles(medium, fileNum, 1);
-        unsortedLargeFiles = FileMaker.generateFiles(large, fileNum, 1);
+        getRunTimes("Reverse Sorted", small);
+        getRunTimes("Reverse Sorted", medium);
+        getRunTimes("Reverse Sorted", large);
 
-        sortedSmallFiles = FileMaker.generateFiles(small, fileNum, 2);
-        sortedMediumFiles = FileMaker.generateFiles(medium, fileNum, 2);
-        sortedLargeFiles = FileMaker.generateFiles(large, fileNum, 2);
+    }
 
-        reverseSortedSmallFiles = FileMaker.generateFiles(small, fileNum, 3);
-        reverseSortedMediumFiles = FileMaker.generateFiles(medium, fileNum, 3);
-        reverseSortedLargeFiles = FileMaker.generateFiles(large, fileNum, 3);
+    private static void getRunTimes(String filePath, int size) throws IOException {
+        ArrayList<Long> mergeTimes = new ArrayList<>();
+        ArrayList<Long> quickTimes = new ArrayList<>();
+        ArrayList<Long> heapTimes = new ArrayList<>();
 
-        //ArrayList<Long> smallUnsortQuickTimes = new ArrayList<>();
-        unsortedSmallFiles.forEach(x -> {
-            try {
-                ArrayList<Integer> temp = Reader.readFile(x);
-                Instant start = Instant.now();
-                Sorter.quickSort(temp);
-                Instant end = Instant.now();
-                //smallUnsortQuickTimes.add(end.toEpochMilli() - start.toEpochMilli());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        //FileMaker.writeFile(quickTimes, quickOutput);
+        for(int i = 0; i < 30; i++){
+            File file = new File(filePath + " Files/" + filePath + " " + size +"/" + filePath + " " +  size + " " + (i + 1));
+            ArrayList<Integer> mergeSortList = Reader.readFile(file);
+            ArrayList<Integer> quickSortList = Reader.readFile(file);
+            ArrayList<Integer> heapSortList = Reader.readFile(file);
 
-//        //Runs heapSort on each file, storing the time taken to sort
-//        ArrayList<Number> heapTimes = new ArrayList<>();
-//        files.forEach(x -> {
-//            try{
-//                ArrayList<Integer> temp = Reader.readFile(x);
-//                Instant start = Instant.now();
-//                Sorter.heapSort(temp);
-//                Instant end = Instant.now();
-//                heapTimes.add(end.toEpochMilli() - start.toEpochMilli());
-//            } catch (IOException e){
-//                e.printStackTrace();
-//            }
-//        });
-//        FileMaker.writeFile(heapTimes, heapOutput);
+            //Gets the run time for merge sort
+            long startTime = System.currentTimeMillis();
+            Sorter.mergeSort(mergeSortList);
+            long endTime  = System.currentTimeMillis();
+            mergeTimes.add(endTime - startTime);
+            System.out.println("Finished Mergesort For: " + filePath + " " + size);
 
-        //Runs mergeSort on each file, storing the time taken to sort
-        //ArrayList<Long> mergeTimes = new ArrayList<>();
-        unsortedSmallFiles.forEach(x -> {
-            try {
-                Instant start = Instant.now();
-                Sorter.mergeSort(Reader.readFile(x));
-                Instant end = Instant.now();
-                //mergeTimes.add(end.toEpochMilli() - start.toEpochMilli());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        //FileMaker.writeFile(mergeTimes, mergeOutput);
+            //Gets the run time quick sort
+            startTime = System.currentTimeMillis();
+            Sorter.quickSort(quickSortList);
+            endTime  = System.currentTimeMillis();
+            quickTimes.add(endTime - startTime);
+            System.out.println("Finished Quicksort For: " + filePath + " " + size);
+
+            //Gets the run time heap sort
+            startTime = System.currentTimeMillis();
+            Sorter.heapSort(heapSortList);
+            endTime  = System.currentTimeMillis();
+            heapTimes.add(endTime - startTime);
+            System.out.println("Finished Heapsort For: " + filePath + " " + size);
+        }
+        FileMaker.writeFile(mergeTimes, filePath + " Files/" + "Merge " + filePath + " " + size + " Times");
+        FileMaker.writeFile(quickTimes, filePath + " Files/" + "Quick " + filePath + " " + size + " Times");
+        FileMaker.writeFile(heapTimes, filePath + " Files/" + "Heap " + filePath + " " + size + " Times");
     }
 }

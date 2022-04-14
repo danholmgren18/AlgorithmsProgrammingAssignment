@@ -29,19 +29,19 @@ public class FileMaker {
             switch (fileFlag) {
                 case 1:
                     file = new File("Unsorted Files/Unsorted " + size + "/Unsorted " + size + " " + (i + 1));
-                    writeFile(contents, file);
+                    writeFile(contents, file.getPath());
                     files.add(file);
                     break;
                 case 2:
                     file = new File("Sorted Files/Sorted " + size + "/Sorted " + size + " " + (i + 1));
                     contents.sort(Comparator.naturalOrder());
-                    writeFile(contents, file);
+                    writeFile(contents, file.getPath());
                     files.add(file);
                     break;
                 case 3:
                     file = new File("Reverse Sorted Files/Reverse Sorted " + size + "/Reverse Sorted " + size + " " + (i + 1));
                     contents.sort(Collections.reverseOrder());
-                    writeFile(contents, file);
+                    writeFile(contents, file.getPath());
                     files.add(file);
                     break;
                 default:
@@ -54,10 +54,10 @@ public class FileMaker {
     /***
      * Writes the contents of the list to the specified file
      * @param content the list of numbers to write
-     * @param file the file being written to
+     * @param filePath the file path being written to
      */
-    public static void writeFile(ArrayList<? extends Number> content, File file) throws IOException {
-        FileWriter writer = new FileWriter(file);
+    public static void writeFile(ArrayList<? extends Number> content, String filePath) throws IOException {
+        FileWriter writer = new FileWriter(filePath);
 
         //Writes each number in the list to the file
         content.forEach(x -> {

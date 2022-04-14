@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Collections.swap;
+
 /**
  * Class that holds all the sorting algorithms
  */
@@ -17,7 +19,6 @@ public class Sorter {
             quickSort(fileContents.subList(left, s));
             quickSort(fileContents.subList(s + 1, right));
         }
-        isSorted(fileContents);
     }
 
     //Using the pseudocode from the book
@@ -37,22 +38,19 @@ public class Sorter {
             mergeSort(tempB);
             mergeSort(tempC);
             merge(tempB, tempC, fileContents);
-            isSorted(fileContents);
         }
     }
 
     //Using the pseudocode from the book
+    //Merlin helped :)
     public static void heapSort(List<Integer> fileContents){
-        int unsorted = fileContents.size() - 1;
-        while(unsorted > 0){
-            heapify(fileContents.subList(0, unsorted + 1));
-            int temp = fileContents.get(0);
-            fileContents.set(0, fileContents.get(unsorted));
-            fileContents.set(unsorted, temp);
-            unsorted--;
+        buildHeap(fileContents);
+        int notSorted = fileContents.size() - 1;
+        while(notSorted > 0){
+            swap(fileContents, 0, notSorted);
+            notSorted--;
+            heapify(fileContents.subList(0, notSorted + 1), 0);
         }
-
-        System.out.println(fileContents);
     }
 
     //Using the pseudocode from the book
@@ -89,27 +87,35 @@ public class Sorter {
 
     //Using the pseudocode from the book
     //Also referenced: https://en.wikipedia.org/wiki/Dutch_national_flag_problem
-    private static int partition(List<Integer> A){
+    private static int partition(List<Integer> A) {
         int i = 0;
         int j = 0;
-        int k = A.size() - 1;
-        int mid = A.size() / 2;
+        int k = A.size()-1;
+        int pivot = A.get(A.size() / 2);
+        if(A.size() > 100) {
+            int first = A.get(0);
+            int middle = A.get(A.size() / 2);
+            int last = A.get(A.size()-1);
+            if(((last > middle) && (first < middle)) || ((first > middle) && (last < middle))) {
+                pivot = middle;
+            }else if(((last > first) && (middle < first)) || ((middle > first) && (last < first))) {
+                pivot = first;
+            } else {
+                pivot = last;
+            }
+        } else {
+            pivot = A.get(A.size() / 2);
+        }
 
         while (j <= k) {
-            if (A.get(j) < A.get(mid)) {
-                int temp = A.get(i);
-                A.set(i, A.get(j));
-                A.set(j, temp);
+            if (A.get(j) < pivot) {
+                swap(A, i, j);
                 i++;
                 j++;
-            }
-            else if (A.get(j) > A.get(mid)) {
-                int temp = A.get(j);
-                A.set(j, A.get(k));
-                A.set(k, temp);
+            } else if (A.get(j) > pivot) {
+                swap(A, j, k);
                 k--;
-            }
-            else {
+            }else {
                 j++;
             }
         }
@@ -117,40 +123,42 @@ public class Sorter {
     }
 
     //Using pseudocode from the book
-    private static void heapify (List<Integer> list) {
-        int n = list.size();
-        for (int i = Math.floorDiv(n, 2);i > 0; i--) {
-            int k = i-1;
-            int v = list.get(k);
-
-            boolean heap = false;
-            while ((!heap) && ((2*(k+1)) <= n)) {
-                int j = (2*(k+1)-1);
-                if (j < n-2) {
-                    if (list.get(j) < list.get(j + 1)) {
-                        j++;
-                    }
+    private static void heapify (List<Integer> fileContents, int position) {
+        int childOne = ((2 * position) + 1);
+        int childTwo = ((2 * position) + 2);
+        if(childTwo < fileContents.size()){
+            if(fileContents.get(childOne) > fileContents.get(childTwo)){
+                if(fileContents.get(position) < fileContents.get(childOne)){
+                    swap(fileContents, childOne, position);
+                    heapify(fileContents, childOne);
                 }
-                if (v >= list.get(j)) {
-                    heap = true;
-                }
-                else {
-                    list.set(k, list.get(j));
-                    k = j;
+            } else{
+                if(fileContents.get(position) < fileContents.get(childTwo)){
+                    swap(fileContents, childTwo, position);
+                    heapify(fileContents, childTwo);
                 }
             }
-            list.set(k, v);
+        } else if(childOne < fileContents.size()){
+            if(fileContents.get(position) < fileContents.get(childOne)){
+                swap(fileContents, childOne, position);
+                heapify(fileContents, childOne);
+            }
         }
     }
 
-    private static boolean isSorted(List<Integer> list){
+    private static void buildHeap(List<Integer> fileContents){
+        for(int i = fileContents.size() / 2; i >=0; i--){
+            heapify(fileContents, i);
+        }
+    }
+
+    private static void isSorted(List<Integer> list){
         for(int i = 0; i < list.size() - 1; i++){
             if(list.get(i) > list.get(i + 1)){
                 System.out.println("SOMETHING FAILED!!!");
-                return false;
+                return;
             }
         }
         System.out.println("SORTED!!!");
-        return true;
     }
 }
